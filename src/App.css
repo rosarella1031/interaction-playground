@@ -471,11 +471,11 @@ body { margin: 0; background: var(--bg); }
 .row input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 1.5px;
-  height: 10px;
-  border-radius: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
   background: var(--text);
-  margin-top: -4.25px;
+  margin-top: -3.25px;
   cursor: pointer;
 }
 .row input[type='range']::-moz-range-track {
@@ -483,10 +483,10 @@ body { margin: 0; background: var(--bg); }
   background: var(--border);
 }
 .row input[type='range']::-moz-range-thumb {
-  width: 1.5px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border: 0;
-  border-radius: 0;
+  border-radius: 50%;
   background: var(--text);
   cursor: pointer;
 }
