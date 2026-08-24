@@ -46,7 +46,7 @@ export const PRESETS = {
     values: { stiffness: 480, damping: 37, mass: 1, widthStiffness: 1100, widthDamping: 66, hoverAttraction: 0.10, hoverLean: 0.45, stretch: 0.003, maxStretch: 9 },
   },
   snappy: {
-    label: 'Snappy',
+    label: 'Brisk',
     values: { stiffness: 620, damping: 42, mass: 1, widthStiffness: 1400, widthDamping: 75, hoverAttraction: 0.10, hoverLean: 0.5, stretch: 0.002, maxStretch: 7 },
   },
   loose: {
