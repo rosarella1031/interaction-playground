@@ -189,8 +189,7 @@ body { margin: 0; background: var(--bg); }
 .is-nav-collapsed .nav-label,
 .is-nav-collapsed .nav-list { display: none; }
 .is-nav-collapsed .nav-head { justify-content: center; padding: 12px 0; }
-.is-nav-collapsed .nav-note { display: none; }
-.is-nav-collapsed .nav-foot { align-items: center; padding: 12px 0; }
+.is-nav-collapsed .nav-foot { justify-content: center; padding: 12px 0; }
 
 /* left: preview never scrolls away because nothing here scrolls */
 .main {
@@ -626,17 +625,47 @@ body { margin: 0; background: var(--bg); }
 @media (max-width: 900px) {
   .page { display: block; height: auto; }
 
+  /* Icon-only bar by default (nav starts collapsed on mobile). Tapping the
+     panel icon no longer widens a column here — instead .nav-list detaches
+     into a dropdown, so the bar itself always stays this compact. */
   .sidebar {
+    position: relative;
     flex-direction: row;
     align-items: center;
     gap: 4px;
-    padding-right: 8px;
+    padding: 6px 10px;
     border-right: 0;
     border-bottom: 1px solid var(--border);
   }
-  .nav-head { padding: 10px 4px 10px 10px; }
-  .nav-brand, .nav-label { display: none; }
-  .nav-list { flex-direction: row; padding: 0; }
+
+  .nav-brand,
+  .nav-label { display: none; }
+
+  /* the theme icon rides along at the end of the icon bar */
+  .sidebar .nav-foot {
+    margin-top: 0;
+    margin-left: auto;
+    padding: 0;
+  }
+
+  /* closed: matches the desktop collapsed-rail rule that already hides
+     .nav-list — nothing extra needed here.
+     open: pop it as a dropdown instead of pushing the row wider. */
+  .page:not(.is-nav-collapsed) .nav-list {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 8px;
+    min-width: 200px;
+    padding: 6px;
+    gap: 2px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+    z-index: 5;
+  }
 
   .main {
     position: sticky;
@@ -703,25 +732,5 @@ body { margin: 0; background: var(--bg); }
 .nav-foot {
   margin-top: auto;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 14px 8px 12px;
+  padding: 12px 10px;
 }
-
-.nav-note {
-  display: flex;
-  gap: 8px;
-  align-self: stretch;
-  margin: 0;
-  padding: 10px 10px 11px;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  font-size: 11px;
-  line-height: 1.5;
-  color: var(--text-muted);
-}
-
-.nav-note > svg { flex: none; margin-top: 1px; }
-.nav-note p { margin: 0; }

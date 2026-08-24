@@ -15,16 +15,6 @@ const STUDIES = [{ id: 'segmented', label: 'Segmented control' }];
 const THEME_ORDER = ['system', 'light', 'dark'];
 const THEME_LABEL = { system: 'Auto', light: 'Light', dark: 'Dark' };
 
-function InfoIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 14 14" aria-hidden="true">
-      <circle cx="7" cy="7" r="5.4" fill="none" stroke="currentColor" strokeWidth="1.2" />
-      <path d="M7 6.4v3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-      <circle cx="7" cy="4.2" r="0.75" fill="currentColor" />
-    </svg>
-  );
-}
-
 function ThemeIcon({ mode }) {
   if (mode === 'light') {
     return (
@@ -130,7 +120,11 @@ export default function App() {
   const [equalWidths, setEqualWidths] = useState(LAYOUT.equalWidths);
   const [openSec, setOpenSec] = useState({ motion: true, curve: true, code: true });
   const [popped, setPopped] = useState({});
-  const [navOpen, setNavOpen] = useState(true);
+  // Desktop starts with the panel open; mobile starts as an icon-only
+  // rail (opening it becomes a drawer instead of widening a column).
+  const [navOpen, setNavOpen] = useState(() =>
+    typeof window === 'undefined' ? true : window.matchMedia('(min-width: 901px)').matches
+  );
   const [theme, setTheme] = useState('system');
 
   useEffect(() => {
@@ -144,6 +138,16 @@ export default function App() {
     mq.addEventListener('change', apply);          // keep following the OS
     return () => mq.removeEventListener('change', apply);
   }, [theme]);
+
+  useEffect(() => {
+    if (!navOpen) return undefined;
+    const onPointerDown = (e) => {
+      if (window.innerWidth > 900) return;
+      if (!e.target.closest('.sidebar')) setNavOpen(false);
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    return () => document.removeEventListener('pointerdown', onPointerDown);
+  }, [navOpen]);
 
   const toggleSec = (id) => setOpenSec((o) => ({ ...o, [id]: !o[id] }));
   const detach = (id) => setPopped((p) => ({ ...p, [id]: true }));
@@ -284,14 +288,6 @@ export default function App() {
         </ul>
 
         <div className="nav-foot">
-          <div className="nav-note" role="note">
-            <InfoIcon />
-            <p>
-              Visual design in progress — the interface styling is still being
-              iterated. Motion behavior is the focus for now.
-            </p>
-          </div>
-
           <button
             type="button"
             className="nav-theme has-tip tip-up"
