@@ -15,6 +15,16 @@ const STUDIES = [{ id: 'segmented', label: 'Segmented control' }];
 const THEME_ORDER = ['system', 'light', 'dark'];
 const THEME_LABEL = { system: 'Auto', light: 'Light', dark: 'Dark' };
 
+function InfoIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 14 14" aria-hidden="true">
+      <circle cx="7" cy="7" r="5.4" fill="none" stroke="currentColor" strokeWidth="1.2" />
+      <path d="M7 6.4v3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <circle cx="7" cy="4.2" r="0.75" fill="currentColor" />
+    </svg>
+  );
+}
+
 function ThemeIcon({ mode }) {
   if (mode === 'light') {
     return (
@@ -274,10 +284,13 @@ export default function App() {
         </ul>
 
         <div className="nav-foot">
-          <p className="nav-note">
-            Visual design in progress — the interface styling is still being
-            iterated. Motion behavior is the focus for now.
-          </p>
+          <div className="nav-note" role="note">
+            <InfoIcon />
+            <p>
+              Visual design in progress — the interface styling is still being
+              iterated. Motion behavior is the focus for now.
+            </p>
+          </div>
 
           <button
             type="button"

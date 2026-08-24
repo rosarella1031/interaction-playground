@@ -710,9 +710,18 @@ body { margin: 0; background: var(--bg); }
 }
 
 .nav-note {
+  display: flex;
+  gap: 8px;
+  align-self: stretch;
   margin: 0;
-  padding: 0 6px;
+  padding: 10px 10px 11px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   font-size: 11px;
   line-height: 1.5;
   color: var(--text-muted);
 }
+
+.nav-note > svg { flex: none; margin-top: 1px; }
+.nav-note p { margin: 0; }
