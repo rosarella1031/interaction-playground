@@ -50,7 +50,7 @@ export const PRESETS = {
     values: { stiffness: 620, damping: 42, mass: 1, widthStiffness: 1400, widthDamping: 75, hoverAttraction: 0.10, hoverLean: 0.5, stretch: 0.002, maxStretch: 7 },
   },
   loose: {
-    label: 'Liquid',
+    label: 'Jelly',
     values: { stiffness: 140, damping: 13, mass: 1.2, widthStiffness: 140, widthDamping: 13, hoverAttraction: 0.32, hoverLean: 0.25, stretch: 0.030, maxStretch: 34 },
   },
   critical: {
