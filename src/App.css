@@ -150,6 +150,9 @@ body { margin: 0; background: var(--bg); overflow-x: hidden; }
 }
 .nav-theme:hover { background: var(--surface-hover); color: var(--text); }
 
+/* narrow-tier-only alternative — see the ≤640px block */
+.theme-toggle { display: none; }
+
 .nav-label {
   margin: 0 0 6px;
   padding: 0 14px;
@@ -734,7 +737,6 @@ body { margin: 0; background: var(--bg); overflow-x: hidden; }
     grid-row: 1;
     justify-content: center;
     padding: 10px 4px;
-    border-bottom: 1px solid var(--border);
   }
   .sec-toggle { flex: 1; justify-content: center; padding: 6px 2px; }
   .chev { display: none; }
@@ -756,7 +758,6 @@ body { margin: 0; background: var(--bg); overflow-x: hidden; }
   .dock[data-active='curve']  [data-id='curve']  .sec-toggle,
   .dock[data-active='code']   [data-id='code']   .sec-toggle {
     color: var(--text);
-    background: var(--surface-hover);
   }
 
   .row { grid-template-columns: 108px 1fr 56px; gap: 8px; }
@@ -821,7 +822,32 @@ body { margin: 0; background: var(--bg); overflow-x: hidden; }
     padding: 6px 0 0;
     border-top: 1px solid var(--border);
   }
-  .nav-theme::after { left: auto; right: 0; }
+
+  /* three visible, directly-pickable modes instead of one cycling icon */
+  .nav-theme { display: none; }
+  .theme-toggle {
+    display: flex;
+    gap: 4px;
+    width: 100%;
+  }
+  .theme-cell {
+    flex: 1;
+    appearance: none;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 6px 0;
+    font: inherit;
+    font-size: 12px;
+    color: var(--text-2);
+    cursor: pointer;
+  }
+  .theme-cell:hover { background: var(--surface-hover); color: var(--text); }
+  .theme-cell.is-active {
+    background: var(--selected-bg);
+    border-color: var(--selected-bg);
+    color: var(--selected-fg);
+  }
 
   .main {
     position: sticky;

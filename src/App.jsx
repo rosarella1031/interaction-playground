@@ -344,6 +344,24 @@ export default function App() {
             >
               <ThemeIcon mode={theme} />
             </button>
+
+            {/* narrow-tier-only alternative to the cycling icon above: all
+                three modes visible and pickable directly, same segmented
+                look the app itself studies */}
+            <div className="theme-toggle" role="radiogroup" aria-label="Theme">
+              {THEME_ORDER.map((id) => (
+                <button
+                  key={id}
+                  type="button"
+                  className={`theme-cell${theme === id ? ' is-active' : ''}`}
+                  role="radio"
+                  aria-checked={theme === id}
+                  onClick={() => setTheme(id)}
+                >
+                  {THEME_LABEL[id]}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </nav>
