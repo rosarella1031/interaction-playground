@@ -476,6 +476,14 @@ body { margin: 0; background: var(--bg); overflow-x: hidden; }
   height: 16px;
   background: transparent;
   cursor: pointer;
+  /* a horizontal slider naturally captures drag gestures for its own
+     thumb — including vertical ones, on many touch browsers, unless told
+     otherwise. Parameters is nine of these stacked in a row; a vertical
+     swipe starting on or near any one of them gets read as "set the
+     value" instead of "scroll the page". pan-y tells the browser to let
+     vertical panning through and only claim the gesture when it's
+     actually horizontal (i.e. genuinely dragging the thumb). */
+  touch-action: pan-y;
 }
 .row input[type='range']::-webkit-slider-runnable-track {
   height: 1.5px;
