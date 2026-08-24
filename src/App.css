@@ -873,10 +873,14 @@ body { margin: 0; background: var(--bg); overflow-x: hidden; }
 
   .stage { flex: none; height: 190px; padding: 20px; }
 
+  /* dock is no longer height-constrained here (align-self:start further
+     up), so it has nothing of its own to scroll — falls back to the base
+     overflow-y:auto/overscroll-behavior:contain, rather than pinning
+     overflow:visible, which is the more conservative choice for touch
+     scroll chaining even though nothing here visibly needed clipping. */
   .dock {
     border-left: 0;
     border-top: 1px solid var(--border);
-    overflow: visible;
   }
 
   .fwin { width: calc(100vw - 32px); max-width: 344px; }
