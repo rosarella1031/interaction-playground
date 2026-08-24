@@ -119,6 +119,9 @@ export default function App() {
   const [activePreset, setActivePreset] = useState('precise');
   const [equalWidths, setEqualWidths] = useState(LAYOUT.equalWidths);
   const [openSec, setOpenSec] = useState({ motion: true, curve: true, code: true });
+  // Mobile-only: which dock section the tab strip shows. Independent of
+  // openSec — desktop's per-section collapse state is untouched either way.
+  const [mobileTab, setMobileTab] = useState('motion');
   const [popped, setPopped] = useState({});
   // Desktop starts with the panel open; mobile starts as an icon-only
   // rail (opening it becomes a drawer instead of widening a column).
@@ -321,10 +324,25 @@ export default function App() {
         </div>
       </div>
 
-      <aside className="dock">
+      <aside className="dock" data-active={mobileTab}>
+        <div className="dock-tabs">
+          {sections.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              className={`preset${mobileTab === s.id ? ' is-active' : ''}`}
+              onClick={() => setMobileTab(s.id)}
+              aria-current={mobileTab === s.id}
+            >
+              {s.title}
+            </button>
+          ))}
+        </div>
+
         {sections.map((s) => (
           <Section
             key={s.id}
+            id={s.id}
             title={s.title}
             open={openSec[s.id]}
             popped={!!popped[s.id]}

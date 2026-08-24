@@ -249,6 +249,8 @@ body { margin: 0; background: var(--bg); }
   overscroll-behavior: contain;
 }
 
+.dock-tabs { display: none; }
+
 .sec-block { border-bottom: 1px solid var(--border); }
 
 .sec-head {
@@ -685,8 +687,61 @@ body { margin: 0; background: var(--bg); }
     overflow: visible;
   }
 
+  /* three tabs instead of three stacked collapsible panels — only the
+     active section's markup renders visible, chosen by data-active on
+     .dock rather than each section's own (still-independent) open state */
+  .dock-tabs {
+    display: flex;
+    gap: 6px;
+    padding: 14px 14px 0;
+  }
+  .dock-tabs .preset { flex: 1; text-align: center; }
+
+  .dock .sec-block { display: none; border-bottom: 0; }
+  .dock[data-active='motion'] .sec-block[data-id='motion'],
+  .dock[data-active='curve']  .sec-block[data-id='curve'],
+  .dock[data-active='code']   .sec-block[data-id='code'] { display: block; }
+
   .sec-detach { opacity: 1; }
   .fwin { width: calc(100vw - 32px); max-width: 344px; }
+
+  /* ── native range thumb, reset ──────────────────────────────
+     iOS Safari stretches the default thumb to match an explicit input
+     height instead of keeping it circular once a fixed height is set
+     without a matching -webkit-appearance reset. Below, appearance is
+     fully reset and the thumb/track are drawn by hand so the thumb stays
+     a small fixed circle on every mobile browser. */
+  .row input[type='range'] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+  }
+  .row input[type='range']::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+  }
+  .row input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--text);
+    margin-top: -5px;
+  }
+  .row input[type='range']::-moz-range-track {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+  }
+  .row input[type='range']::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--text);
+  }
 }
 
 /* ── dark scheme ─────────────────────────────────────────── */

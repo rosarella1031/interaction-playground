@@ -24,9 +24,9 @@ function DetachIcon() {
 }
 
 /** One collapsible section of the docked inspector. */
-export function Section({ title, open, popped, onToggle, onDetach, children }) {
+export function Section({ id, title, open, popped, onToggle, onDetach, children }) {
   return (
-    <section className="sec-block">
+    <section className="sec-block" data-id={id}>
       <div className="sec-head">
         <button
           type="button"
