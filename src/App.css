@@ -854,7 +854,7 @@ body { margin: 0; background: var(--bg); overflow-x: hidden; }
     top: 0;
     z-index: 2;
     background: var(--bg);
-    padding: 16px 20px 12px;
+    padding: 16px 20px 28px;
     gap: 14px;
     overflow: visible;
   }
