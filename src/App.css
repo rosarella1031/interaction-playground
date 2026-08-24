@@ -1,0 +1,685 @@
+/* ─────────────────────────────────────────────────────────────
+   Neutral system. Two surface tiers that follow the colour scheme:
+     page  →  raised surface (demo canvas, code block, pill)
+   Ink is the only interaction accent. No hue anywhere.
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  --bg:            #FAFAFA;
+  --surface:       #FFFFFF;
+  --surface-2:     #F7F7F7;
+  --surface-hover: #F2F2F2;
+  --border:        #EAEAEA;
+
+  --text:          #171717;
+  --text-2:        #666666;
+  --text-muted:    #8F8F8F;
+
+  --selected-bg:   #171717;
+  --selected-fg:   #FFFFFF;
+
+  /* Geist Sans is installed locally; Geist Mono is not, so mono falls back. */
+  --font-sans: Geist, ui-sans-serif, -apple-system, system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Preview + control ladder. One ordering in both themes:
+       track (recessed)  <  canvas  <  selected (raised)
+     so the selected segment is always the strongest surface inside a
+     well that is itself distinct from the canvas. */
+  --preview-surface:    #F1F1F1;
+  --control-track:      #DBDBDB;
+  --control-border:     #C6C6C6;
+  --control-selected:   #FFFFFF;
+  --control-text:       #171717;
+  --control-text-muted: #565656;
+
+  /* inverted so the label reads instantly against any surface */
+  --tooltip-bg: #171717;
+  --tooltip-fg: #FFFFFF;
+
+  --radius:    6px;
+  --radius-lg: 10px;
+
+  /* code surface + syntax. Low-chroma on purpose: colour marks meaning,
+     it does not decorate. Locals, operators and separators stay near-ink. */
+  --code-surface: #FFFFFF;
+  --code-text:    #1F1F1F;
+  --code-lit:     #F4F4F4;
+
+  --tok-kw:  #7C5CFC;
+  --tok-fn:  #9A6700;
+  --tok-var: #2563A6;
+  --tok-str: #A14F63;
+  --tok-num: #3F7F5A;
+  --tok-com: #8A8A8A;
+  --tok-pun: #666666;
+}
+
+* { box-sizing: border-box; }
+
+/* Background belongs to the document, not the centred column — otherwise
+   the gutters fall back to the browser's white on wide viewports.
+   color-scheme also hands the theme to native scrollbars and range inputs. */
+html {
+  background: var(--bg);
+  color-scheme: light dark;
+}
+
+body { margin: 0; background: var(--bg); }
+
+.page {
+  --nav-w: 244px;
+  display: grid;
+  grid-template-columns: var(--nav-w) minmax(0, 1fr) 380px;
+  height: 100vh;
+  transition: grid-template-columns 180ms ease;
+  font: 13px/1.5 var(--font-sans);
+  color: var(--text-2);
+  -webkit-font-smoothing: antialiased;
+}
+
+.page.is-nav-collapsed { --nav-w: 52px; }
+
+/* ── study nav ───────────────────────────────────────────── */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+}
+
+.nav-head {
+  display: flex;
+  align-items: center;
+  padding: 12px 10px;
+}
+
+.nav-brand { padding: 6px 14px 20px; }
+
+.nav-title {
+  margin: 0 0 7px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  color: var(--text);
+}
+
+.nav-tagline {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.nav-toggle {
+  flex: none;
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 6px;
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+}
+.nav-toggle:hover { background: var(--surface-hover); color: var(--text); }
+
+.nav-label {
+  margin: 0 0 6px;
+  padding: 0 14px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 2px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 7px 8px;
+  border-radius: var(--radius);
+  font: inherit;
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+}
+.nav-item:hover { background: var(--surface-hover); color: var(--text); }
+.nav-item.is-active { background: var(--surface-hover); color: var(--text); }
+
+/* collapsed rail: nothing but the toggle icon — the rail itself carries
+   no surface and no edge, so it reads as page, not as a panel */
+.is-nav-collapsed .sidebar {
+  background: transparent;
+  border-right: 0;
+}
+.is-nav-collapsed .nav-brand,
+.is-nav-collapsed .nav-label,
+.is-nav-collapsed .nav-list { display: none; }
+.is-nav-collapsed .nav-head { justify-content: center; padding: 12px 0; }
+
+/* left: preview never scrolls away because nothing here scrolls */
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+  padding: 32px 40px;
+  overflow: hidden;
+}
+
+/* ── masthead ────────────────────────────────────────────── */
+
+.masthead { flex: none; }
+
+.masthead-title {
+  margin: 0 0 5px;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.018em;
+  color: var(--text);
+}
+
+.masthead-sub { margin: 0; font-size: 13px; color: var(--text-muted); }
+
+/* ── section labels ──────────────────────────────────────── */
+
+.sec {
+  margin: 0 0 20px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── preview surface ─────────────────────────────────────── */
+
+.stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background: var(--preview-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+/* ── docked inspector ───────────────────────────────────── */
+
+.dock {
+  border-left: 1px solid var(--border);
+  background: var(--surface);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.sec-block { border-bottom: 1px solid var(--border); }
+
+.sec-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px 0 10px;
+}
+
+.sec-toggle {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 13px 4px;
+  font: inherit;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-align: left;
+}
+.sec-toggle:hover { color: var(--text); }
+.sec-toggle:disabled { cursor: default; opacity: 0.5; }
+
+.chev { transition: transform 140ms ease; flex: none; }
+.chev.is-open { transform: rotate(90deg); }
+
+.sec-title {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.sec-detach {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 6px;
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  opacity: 0;
+  transition: opacity 120ms ease, background-color 120ms ease, color 120ms ease;
+}
+.sec-head:hover .sec-detach,
+.sec-detach:focus-visible { opacity: 1; }
+.sec-detach:hover { background: var(--surface-hover); color: var(--text); }
+
+.sec-body { padding: 2px 18px 20px; }
+
+.sec-detached {
+  margin: 0;
+  padding: 0 18px 16px 32px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ── tooltips ────────────────────────────────────────────── */
+/* Replaces the native title attribute, which waits ~1s and renders
+   in the OS style. This shows immediately and in-theme. */
+
+.has-tip { position: relative; }
+
+.has-tip::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: calc(100% + 7px);
+  left: 0;
+  z-index: 30;
+  padding: 5px 8px;
+  border-radius: var(--radius);
+  background: var(--tooltip-bg);
+  color: var(--tooltip-fg);
+  font: 500 11px/1.35 var(--font-sans);
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(-3px);
+  pointer-events: none;
+  transition: opacity 110ms ease, transform 110ms ease;
+}
+
+.has-tip.tip-right::after { left: auto; right: 0; }
+
+.has-tip:hover::after,
+.has-tip:focus-visible::after { opacity: 1; transform: translateY(0); }
+
+/* ── detached window ─────────────────────────────────────── */
+
+.fwin {
+  position: fixed;
+  z-index: 10;
+  width: 344px;
+  max-height: 76vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+}
+
+.fwin-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 10px 11px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.fwin-head:active { cursor: grabbing; }
+
+.fwin-close {
+  margin-left: auto;
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 5px;
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+}
+.fwin-close:hover { background: var(--surface-hover); color: var(--text); }
+
+.fwin-body { padding: 16px 18px 20px; overflow-y: auto; }
+
+/* ── presets ─────────────────────────────────────────────── */
+
+.presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 28px; }
+
+.preset {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 6px 9px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+.preset:hover { background: var(--surface-hover); color: var(--text); }
+.preset.is-active {
+  background: var(--selected-bg);
+  border-color: var(--selected-bg);
+  color: var(--selected-fg);
+}
+.preset:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+
+/* ── slider rows ─────────────────────────────────────────── */
+
+.rows { display: flex; flex-direction: column; }
+
+.row {
+  display: grid;
+  grid-template-columns: 100px 1fr 66px;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+}
+
+.row-label {
+  font-size: 13px;
+  color: var(--text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.row input[type='range'] {
+  width: 100%;
+  height: 16px;
+  accent-color: var(--text);
+  cursor: pointer;
+}
+
+.row-input {
+  width: 100%;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  padding: 4px 6px;
+  transition: border-color 120ms ease, background-color 120ms ease;
+}
+.row-input:hover { background: var(--surface-hover); }
+.row-input:focus {
+  outline: none;
+  border-color: var(--text);
+  background: var(--surface);
+}
+
+/* ── toggle ──────────────────────────────────────────────── */
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 22px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.toggle input { accent-color: var(--text); margin: 0; }
+
+/* ── 3. motion curve ─────────────────────────────────────── */
+
+.curve { margin: 0; }
+
+.curve-svg {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.curve-target,
+.curve-base { stroke: var(--border); stroke-width: 1; }
+.curve-target { stroke-dasharray: 2 3; }
+
+.curve-pos {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.curve-width {
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 1.25;
+  stroke-dasharray: 3 3;
+}
+
+.curve-key {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 16px 0 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.key { display: inline-flex; align-items: center; gap: 7px; }
+.key::before { content: ''; width: 14px; height: 0; border-top-width: 2px; }
+.key-pos::before   { border-top-style: solid;  border-top-color: var(--text); }
+.key-width::before { border-top-style: dashed; border-top-color: var(--text-muted); }
+.curve-span { margin-left: auto; font-family: var(--font-mono); font-size: 11px; }
+
+/* ── response stats ──────────────────────────────────────── */
+
+.stats {
+  display: flex;
+  gap: 36px;
+  margin: 22px 0 0;
+}
+
+.stat { display: flex; flex-direction: column; gap: 3px; }
+.stat dt { font-size: 12px; color: var(--text-muted); }
+.stat dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.stat .stat-note {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 0;
+}
+
+.cp-block {
+  margin: 0;
+  padding: 16px 0;
+  background: var(--code-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.75;
+  color: var(--code-text);
+  overflow-x: auto;
+}
+
+.cp-line.is-sep { margin-top: 12px; }
+
+.cp-line {
+  padding: 0 18px;
+  margin: 0;
+  white-space: pre;
+  transition: background-color 420ms ease, box-shadow 420ms ease;
+}
+.cp-line.is-lit {
+  background: var(--code-lit);
+  box-shadow: inset 2px 0 0 var(--code-text);
+  transition: background-color 60ms ease, box-shadow 60ms ease;
+}
+
+.tok-kw  { color: var(--tok-kw); }
+.tok-fn  { color: var(--tok-fn); }
+.tok-var { color: var(--tok-var); }
+.tok-str { color: var(--tok-str); }
+.tok-num { color: var(--tok-num); }
+.tok-com { color: var(--tok-com); }
+.tok-pun { color: var(--tok-pun); }
+
+/* ── segmented control ───────────────────────────────────── */
+
+.sc-track {
+  position: relative;
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 9px;
+  background: var(--control-track);
+  box-shadow: inset 0 0 0 1px var(--control-border);
+}
+
+.sc-track.is-equal .sc-option { flex: 1 1 0; min-width: 0; }
+
+.sc-pill {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 0;
+  width: 0;
+  border-radius: 6px;
+  background: var(--control-selected);
+  will-change: transform, width;
+  pointer-events: none;
+}
+
+.sc-option {
+  position: relative;
+  z-index: 1;
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 7px 18px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--control-text-muted);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: color 140ms ease;
+}
+
+.sc-option.is-selected { color: var(--control-text); }
+.sc-option:focus-visible { outline: 1px solid var(--control-text); outline-offset: 2px; }
+
+/* ── responsive ──────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .page { display: block; height: auto; }
+
+  .sidebar {
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    padding-right: 8px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-head { padding: 10px 4px 10px 10px; }
+  .nav-brand, .nav-label { display: none; }
+  .nav-list { flex-direction: row; padding: 0; }
+
+  .main {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--bg);
+    padding: 16px 20px 12px;
+    gap: 14px;
+    overflow: visible;
+  }
+
+  .stage { flex: none; height: 190px; padding: 20px; }
+
+  .dock {
+    border-left: 0;
+    border-top: 1px solid var(--border);
+    overflow: visible;
+  }
+
+  .sec-detach { opacity: 1; }
+  .fwin { width: calc(100vw - 32px); max-width: 344px; }
+}
+
+/* ── dark scheme ─────────────────────────────────────────── */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:            #0A0A0A;
+    --surface:       #1C1C1C;
+    --surface-2:     #141414;
+    --surface-hover: #262626;
+    --border:        #2A2A2A;
+
+    --text:          #EDEDED;
+    --text-2:        #A1A1A1;
+    --text-muted:    #7E7E7E;
+
+    /* active chip inverts: light fill, dark label */
+    --selected-bg:   #EDEDED;
+    --selected-fg:   #171717;
+
+    --preview-surface:    #212121;
+    --control-track:      #0E0E0E;
+    --control-border:     #383838;
+    --control-selected:   #474747;
+    --control-text:       #FFFFFF;
+    --control-text-muted: #949494;
+
+    --tooltip-bg: #EDEDED;
+    --tooltip-fg: #171717;
+
+    --code-surface: #111111;
+    --code-text:    #E6E6E6;
+    --code-lit:     #1C1C1C;
+
+    --tok-kw:  #A78BFA;
+    --tok-fn:  #D6B36A;
+    --tok-var: #7AA2D6;
+    --tok-str: #D28A9B;
+    --tok-num: #7FB38E;
+    --tok-com: #737373;
+    --tok-pun: #B8B8B8;
+  }
+}
