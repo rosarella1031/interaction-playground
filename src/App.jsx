@@ -138,15 +138,18 @@ export default function App() {
   );
   const [theme, setTheme] = useState('system');
 
-  // Below this width, each section's own open/closed state stops driving
-  // visibility — the tab strip does — so a section must always render its
-  // body here regardless of openSec, or switching to its tab shows nothing.
-  const [isCompact, setIsCompact] = useState(() =>
-    typeof window === 'undefined' ? false : window.matchMedia('(max-width: 1000px)').matches
+  // Below this width the dock switches from stacked panels to tabs, and
+  // each section's own open/closed state stops driving visibility — the
+  // active tab does — so a section must always render its body here
+  // regardless of openSec, or switching to its tab shows nothing. The
+  // 641-1000px tier still uses real stacked panels, so this only needs
+  // to match the tab tier itself.
+  const [isNarrow, setIsNarrow] = useState(() =>
+    typeof window === 'undefined' ? false : window.matchMedia('(max-width: 640px)').matches
   );
   useEffect(() => {
-    const mq = window.matchMedia('(max-width: 1000px)');
-    const apply = () => setIsCompact(mq.matches);
+    const mq = window.matchMedia('(max-width: 640px)');
+    const apply = () => setIsNarrow(mq.matches);
     apply();
     mq.addEventListener('change', apply);
     return () => mq.removeEventListener('change', apply);
@@ -397,7 +400,7 @@ export default function App() {
             key={s.id}
             id={s.id}
             title={s.title}
-            open={openSec[s.id] || isCompact}
+            open={openSec[s.id] || isNarrow}
             popped={!!popped[s.id]}
             onToggle={() => { toggleSec(s.id); setMobileTab(s.id); }}
             onDetach={() => detach(s.id)}

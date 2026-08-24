@@ -704,6 +704,15 @@ body { margin: 0; background: var(--bg); overflow-x: hidden; }
     grid-template-columns: var(--nav-w) minmax(0, 1fr) clamp(300px, 36vw, 380px);
   }
 
+  /* Desktop's dock deliberately stretches to fill the viewport (a
+     persistent panel with its own internal scroll). At this width the
+     dock is narrower and its content varies a lot by section — a short
+     tab like Curve would otherwise stretch its white/surface background
+     down through empty space to match the tallest possible tab. Sizing
+     to its own content instead means it only grows the page (and lets
+     the page itself scroll) when content genuinely needs the room. */
+  .dock { align-self: start; }
+
   .sidebar { background: transparent; border-right: 0; }
   .nav-brand,
   .nav-label { display: none; }
@@ -728,6 +737,19 @@ body { margin: 0; background: var(--bg); overflow-x: hidden; }
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
     z-index: 5;
   }
+
+  /* dock stays in its desktop form here — independently collapsible
+     stacked panels, chevron + detach visible — just inside a narrower
+     column. Only the ≤640px tier below switches it to tabs. */
+  .row { grid-template-columns: 108px 1fr 56px; gap: 8px; }
+}
+
+/* ── narrow: not enough width for three columns at all ───────
+   Below this, even a 52px nav + a clamped dock leaves main too thin to
+   be worth keeping beside them — stack nav (as a top bar) above main,
+   and dock below main, instead of side by side. */
+@media (max-width: 640px) {
+  .page { display: block; height: auto; }
 
   /* the three section HEADERS become a tab strip; only the active
      section's body renders below, spanning the full dock width */
@@ -759,16 +781,6 @@ body { margin: 0; background: var(--bg); overflow-x: hidden; }
   .dock[data-active='code']   [data-id='code']   .sec-toggle {
     color: var(--text);
   }
-
-  .row { grid-template-columns: 108px 1fr 56px; gap: 8px; }
-}
-
-/* ── narrow: not enough width for three columns at all ───────
-   Below this, even a 52px nav + a clamped dock leaves main too thin to
-   be worth keeping beside them — stack nav (as a top bar) above main,
-   and dock below main, instead of side by side. */
-@media (max-width: 640px) {
-  .page { display: block; height: auto; }
 
   /* No bar at all here — .nav-hamburger floats over the page instead, so
      the sidebar itself contributes no height and .main can start right
