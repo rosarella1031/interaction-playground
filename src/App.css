@@ -63,10 +63,15 @@
 html {
   background: var(--bg);
   color-scheme: light;
+  /* nothing on the page should ever create horizontal scroll — this also
+     stops invisible (opacity:0) absolutely-positioned content, like the
+     tooltip pseudo-elements below, from inflating the scrollable area */
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
 }
 html[data-theme='dark'] { color-scheme: dark; }
 
-body { margin: 0; background: var(--bg); }
+body { margin: 0; background: var(--bg); overflow-x: hidden; }
 
 .page {
   --nav-w: 244px;
@@ -126,6 +131,11 @@ body { margin: 0; background: var(--bg); }
   display: flex;
 }
 .nav-toggle:hover { background: var(--surface-hover); color: var(--text); }
+
+/* Narrow-tier-only trigger and its dropdown wrapper — inert everywhere
+   else so desktop/compact keep the exact markup-as-today behavior. */
+.nav-hamburger { display: none; }
+.nav-menu { display: contents; }
 
 .nav-theme {
   flex: none;
@@ -759,16 +769,59 @@ body { margin: 0; background: var(--bg); }
 @media (max-width: 640px) {
   .page { display: block; height: auto; }
 
-  .sidebar {
-    flex-direction: row;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 10px;
-    border-bottom: 1px solid var(--border);
+  /* No bar at all here — .nav-hamburger floats over the page instead, so
+     the sidebar itself contributes no height and .main can start right
+     at the top of the viewport. */
+  .sidebar { display: contents; }
+  .nav-head { display: none; }
+
+  .nav-hamburger {
+    display: flex;
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 6;
+    padding: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-muted);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
   }
-  .nav-head { padding: 0; }
-  .nav-foot { padding: 0; margin-left: auto; }
-  .page:not(.is-nav-collapsed) .nav-list { top: calc(100% + 6px); left: 8px; }
+  .nav-hamburger:hover { background: var(--surface-hover); color: var(--text); }
+
+  /* closed: .nav-menu's own display:contents (base rule) plus the
+     existing .is-nav-collapsed hides on .nav-list already used elsewhere
+     leave nothing visible — .nav-foot needs the same treatment here,
+     since at every other tier it's meant to stay visible when collapsed. */
+  .is-nav-collapsed .nav-foot { display: none; }
+
+  /* open: list + theme toggle stacked as one dropdown below the button,
+     not two separate floating pieces. */
+  .page:not(.is-nav-collapsed) .nav-menu {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 50px;
+    right: 12px;
+    min-width: 180px;
+    padding: 6px;
+    gap: 2px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+    z-index: 5;
+  }
+  .page:not(.is-nav-collapsed) .nav-list { position: static; top: auto; left: auto; }
+  .page:not(.is-nav-collapsed) .nav-foot {
+    display: flex;
+    margin-top: 4px;
+    padding: 6px 0 0;
+    border-top: 1px solid var(--border);
+  }
+  .nav-theme::after { left: auto; right: 0; }
 
   .main {
     position: sticky;

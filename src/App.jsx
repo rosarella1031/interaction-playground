@@ -51,6 +51,14 @@ function PanelIcon() {
   );
 }
 
+function HamburgerIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+      <path d="M2 4h10M2 7h10M2 10h10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 const LABELS = {
   stiffness: 'Stiffness',
   damping: 'Damping',
@@ -286,6 +294,20 @@ export default function App() {
           </button>
         </div>
 
+        {/* Narrow-width-only trigger: floats over the page instead of
+            sitting in a bar, so it shares navOpen with .nav-toggle above
+            rather than needing its own state. */}
+        <button
+          type="button"
+          className="nav-hamburger has-tip tip-right"
+          onClick={() => setNavOpen((v) => !v)}
+          aria-expanded={navOpen}
+          aria-label={navOpen ? 'Collapse navigation' : 'Expand navigation'}
+          data-tip={navOpen ? 'Collapse navigation' : 'Expand navigation'}
+        >
+          <HamburgerIcon />
+        </button>
+
         <div className="nav-brand">
           <h1 className="nav-title">Interaction Playground</h1>
           <p className="nav-tagline">
@@ -296,28 +318,33 @@ export default function App() {
 
         <p className="nav-label">Studies</p>
 
-        <ul className="nav-list">
-          {STUDIES.map((st) => (
-            <li key={st.id}>
-              <button type="button" className="nav-item is-active" aria-current="page">
-                <span className="nav-text">{st.label}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
+        {/* display:contents everywhere except the narrow tier, where this
+            becomes the hamburger's actual dropdown box — the list and the
+            theme toggle stacked as one unit instead of two. */}
+        <div className="nav-menu">
+          <ul className="nav-list">
+            {STUDIES.map((st) => (
+              <li key={st.id}>
+                <button type="button" className="nav-item is-active" aria-current="page">
+                  <span className="nav-text">{st.label}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
 
-        <div className="nav-foot">
-          <button
-            type="button"
-            className="nav-theme has-tip tip-up"
-            onClick={() =>
-              setTheme((t) => THEME_ORDER[(THEME_ORDER.indexOf(t) + 1) % THEME_ORDER.length])
-            }
-            data-tip={`Theme: ${THEME_LABEL[theme]}`}
-            aria-label={`Theme: ${THEME_LABEL[theme]}. Click to change.`}
-          >
-            <ThemeIcon mode={theme} />
-          </button>
+          <div className="nav-foot">
+            <button
+              type="button"
+              className="nav-theme has-tip tip-up"
+              onClick={() =>
+                setTheme((t) => THEME_ORDER[(THEME_ORDER.indexOf(t) + 1) % THEME_ORDER.length])
+              }
+              data-tip={`Theme: ${THEME_LABEL[theme]}`}
+              aria-label={`Theme: ${THEME_LABEL[theme]}. Click to change.`}
+            >
+              <ThemeIcon mode={theme} />
+            </button>
+          </div>
         </div>
       </nav>
 
