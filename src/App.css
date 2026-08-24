@@ -249,8 +249,6 @@ body { margin: 0; background: var(--bg); }
   overscroll-behavior: contain;
 }
 
-.dock-tabs { display: none; }
-
 .sec-block { border-bottom: 1px solid var(--border); }
 
 .sec-head {
@@ -624,41 +622,33 @@ body { margin: 0; background: var(--bg); }
 
 /* ── responsive ──────────────────────────────────────────── */
 
-@media (max-width: 900px) {
-  .page { display: block; height: auto; }
-
-  /* Icon-only bar by default (nav starts collapsed on mobile). Tapping the
-     panel icon no longer widens a column here — instead .nav-list detaches
-     into a dropdown, so the bar itself always stays this compact. */
-  .sidebar {
-    position: relative;
-    flex-direction: row;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 10px;
-    border-right: 0;
-    border-bottom: 1px solid var(--border);
+/* ── compact: nav | main | dock stay side by side ───────────
+   Below ~1000px there isn't room for a full-width nav column AND a
+   380px dock without squeezing main to nothing — nav drops to its
+   icon-rail width (same look as the desktop collapsed state) and the
+   dock narrows and switches its three panels to tabs. The grid itself
+   is untouched: this tier is still three columns, left to right. */
+@media (max-width: 1000px) {
+  .page {
+    --nav-w: 52px;
+    grid-template-columns: var(--nav-w) minmax(0, 1fr) clamp(300px, 36vw, 380px);
   }
 
+  .sidebar { background: transparent; border-right: 0; }
   .nav-brand,
   .nav-label { display: none; }
+  .nav-head { justify-content: center; padding: 12px 0; }
+  .nav-foot { justify-content: center; padding: 12px 0; }
 
-  /* the theme icon rides along at the end of the icon bar */
-  .sidebar .nav-foot {
-    margin-top: 0;
-    margin-left: auto;
-    padding: 0;
-  }
-
-  /* closed: matches the desktop collapsed-rail rule that already hides
-     .nav-list — nothing extra needed here.
-     open: pop it as a dropdown instead of pushing the row wider. */
+  /* the study list has nowhere to sit inline at this width regardless of
+     layout tier, so it pops as a dropdown here exactly like on a phone */
+  .sidebar { position: relative; }
   .page:not(.is-nav-collapsed) .nav-list {
     display: flex;
     flex-direction: column;
     position: absolute;
-    top: calc(100% + 6px);
-    left: 8px;
+    top: 8px;
+    left: calc(100% + 8px);
     min-width: 200px;
     padding: 6px;
     gap: 2px;
@@ -669,48 +659,45 @@ body { margin: 0; background: var(--bg); }
     z-index: 5;
   }
 
-  .main {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    background: var(--bg);
-    padding: 16px 20px 12px;
-    gap: 14px;
-    overflow: visible;
+  /* the three section HEADERS become a tab strip; only the active
+     section's body renders below, spanning the full dock width */
+  .dock { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .sec-block { display: contents; }
+  .sec-head {
+    grid-row: 1;
+    justify-content: center;
+    padding: 10px 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sec-toggle { flex: 1; justify-content: center; padding: 6px 2px; }
+  .chev { display: none; }
+  .sec-detach { display: none; }
+
+  .sec-body, .sec-detached { grid-row: 2; grid-column: 1 / -1; }
+  .dock [data-id] .sec-body,
+  .dock [data-id] .sec-detached { display: none; }
+  .dock[data-active='motion'] [data-id='motion'] .sec-body,
+  .dock[data-active='motion'] [data-id='motion'] .sec-detached,
+  .dock[data-active='curve']  [data-id='curve']  .sec-body,
+  .dock[data-active='curve']  [data-id='curve']  .sec-detached,
+  .dock[data-active='code']   [data-id='code']   .sec-body,
+  .dock[data-active='code']   [data-id='code']   .sec-detached { display: block; }
+
+  .dock[data-active='motion'] [data-id='motion'] .sec-toggle,
+  .dock[data-active='curve']  [data-id='curve']  .sec-toggle,
+  .dock[data-active='code']   [data-id='code']   .sec-toggle {
+    color: var(--text);
+    background: var(--surface-hover);
   }
 
-  .stage { flex: none; height: 190px; padding: 20px; }
-
-  .dock {
-    border-left: 0;
-    border-top: 1px solid var(--border);
-    overflow: visible;
-  }
-
-  /* three tabs instead of three stacked collapsible panels — only the
-     active section's markup renders visible, chosen by data-active on
-     .dock rather than each section's own (still-independent) open state */
-  .dock-tabs {
-    display: flex;
-    gap: 6px;
-    padding: 14px 14px 0;
-  }
-  .dock-tabs .preset { flex: 1; text-align: center; }
-
-  .dock .sec-block { display: none; border-bottom: 0; }
-  .dock[data-active='motion'] .sec-block[data-id='motion'],
-  .dock[data-active='curve']  .sec-block[data-id='curve'],
-  .dock[data-active='code']   .sec-block[data-id='code'] { display: block; }
-
-  .sec-detach { opacity: 1; }
-  .fwin { width: calc(100vw - 32px); max-width: 344px; }
+  .row { grid-template-columns: 108px 1fr 56px; gap: 8px; }
 
   /* ── native range thumb, reset ──────────────────────────────
      iOS Safari stretches the default thumb to match an explicit input
      height instead of keeping it circular once a fixed height is set
      without a matching -webkit-appearance reset. Below, appearance is
      fully reset and the thumb/track are drawn by hand so the thumb stays
-     a small fixed circle on every mobile browser. */
+     a small fixed circle on every touch browser. */
   .row input[type='range'] {
     -webkit-appearance: none;
     appearance: none;
@@ -742,6 +729,45 @@ body { margin: 0; background: var(--bg); }
     border-radius: 50%;
     background: var(--text);
   }
+}
+
+/* ── narrow: not enough width for three columns at all ───────
+   Below this, even a 52px nav + a clamped dock leaves main too thin to
+   be worth keeping beside them — stack nav (as a top bar) above main,
+   and dock below main, instead of side by side. */
+@media (max-width: 640px) {
+  .page { display: block; height: auto; }
+
+  .sidebar {
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-head { padding: 0; }
+  .nav-foot { padding: 0; margin-left: auto; }
+  .page:not(.is-nav-collapsed) .nav-list { top: calc(100% + 6px); left: 8px; }
+
+  .main {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--bg);
+    padding: 16px 20px 12px;
+    gap: 14px;
+    overflow: visible;
+  }
+
+  .stage { flex: none; height: 190px; padding: 20px; }
+
+  .dock {
+    border-left: 0;
+    border-top: 1px solid var(--border);
+    overflow: visible;
+  }
+
+  .fwin { width: calc(100vw - 32px); max-width: 344px; }
 }
 
 /* ── dark scheme ─────────────────────────────────────────── */

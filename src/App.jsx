@@ -126,9 +126,23 @@ export default function App() {
   // Desktop starts with the panel open; mobile starts as an icon-only
   // rail (opening it becomes a drawer instead of widening a column).
   const [navOpen, setNavOpen] = useState(() =>
-    typeof window === 'undefined' ? true : window.matchMedia('(min-width: 901px)').matches
+    typeof window === 'undefined' ? true : window.matchMedia('(min-width: 1001px)').matches
   );
   const [theme, setTheme] = useState('system');
+
+  // Below this width, each section's own open/closed state stops driving
+  // visibility — the tab strip does — so a section must always render its
+  // body here regardless of openSec, or switching to its tab shows nothing.
+  const [isCompact, setIsCompact] = useState(() =>
+    typeof window === 'undefined' ? false : window.matchMedia('(max-width: 1000px)').matches
+  );
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 1000px)');
+    const apply = () => setIsCompact(mq.matches);
+    apply();
+    mq.addEventListener('change', apply);
+    return () => mq.removeEventListener('change', apply);
+  }, []);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
@@ -145,7 +159,7 @@ export default function App() {
   useEffect(() => {
     if (!navOpen) return undefined;
     const onPointerDown = (e) => {
-      if (window.innerWidth > 900) return;
+      if (window.innerWidth > 1000) return;
       if (!e.target.closest('.sidebar')) setNavOpen(false);
     };
     document.addEventListener('pointerdown', onPointerDown);
@@ -324,29 +338,21 @@ export default function App() {
         </div>
       </div>
 
+      {/* At compact widths the three section HEADERS become the tab
+          strip (no separate row of buttons) — clicking one keeps each
+          section's own independent open/close state for desktop AND
+          marks it the active tab for compact widths; the two never
+          conflict since each width tier only reads the state it cares
+          about. */}
       <aside className="dock" data-active={mobileTab}>
-        <div className="dock-tabs">
-          {sections.map((s) => (
-            <button
-              key={s.id}
-              type="button"
-              className={`preset${mobileTab === s.id ? ' is-active' : ''}`}
-              onClick={() => setMobileTab(s.id)}
-              aria-current={mobileTab === s.id}
-            >
-              {s.title}
-            </button>
-          ))}
-        </div>
-
         {sections.map((s) => (
           <Section
             key={s.id}
             id={s.id}
             title={s.title}
-            open={openSec[s.id]}
+            open={openSec[s.id] || isCompact}
             popped={!!popped[s.id]}
-            onToggle={() => toggleSec(s.id)}
+            onToggle={() => { toggleSec(s.id); setMobileTab(s.id); }}
             onDetach={() => detach(s.id)}
           >
             {s.body}
