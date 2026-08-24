@@ -87,7 +87,6 @@ body { margin: 0; background: var(--bg); }
   display: flex;
   flex-direction: column;
   min-width: 0;
-  overflow: hidden;
   background: var(--surface);
   border-right: 1px solid var(--border);
 }
@@ -127,6 +126,19 @@ body { margin: 0; background: var(--bg); }
   display: flex;
 }
 .nav-toggle:hover { background: var(--surface-hover); color: var(--text); }
+
+.nav-theme {
+  flex: none;
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 6px;
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+}
+.nav-theme:hover { background: var(--surface-hover); color: var(--text); }
 
 .nav-label {
   margin: 0 0 6px;
@@ -177,6 +189,7 @@ body { margin: 0; background: var(--bg); }
 .is-nav-collapsed .nav-label,
 .is-nav-collapsed .nav-list { display: none; }
 .is-nav-collapsed .nav-head { justify-content: center; padding: 12px 0; }
+.is-nav-collapsed .nav-foot { justify-content: center; padding: 12px 0; }
 
 /* left: preview never scrolls away because nothing here scrolls */
 .main {
@@ -324,6 +337,9 @@ body { margin: 0; background: var(--bg); }
 }
 
 .has-tip.tip-right::after { left: auto; right: 0; }
+
+/* near the bottom of the viewport a tooltip below would be clipped */
+.has-tip.tip-up::after { top: auto; bottom: calc(100% + 7px); transform: translateY(3px); }
 
 .has-tip:hover::after,
 .has-tip:focus-visible::after { opacity: 1; transform: translateY(0); }
@@ -683,33 +699,8 @@ body { margin: 0; background: var(--bg); }
   --tok-pun: #B8B8B8;
 }
 
-/* ── theme switcher ──────────────────────────────────────── */
-
 .nav-foot {
   margin-top: auto;
-  padding: 16px 14px 16px;
+  display: flex;
+  padding: 12px 10px;
 }
-
-.theme-chips { display: flex; gap: 4px; }
-
-.theme-chip {
-  flex: 1;
-  appearance: none;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  border-radius: var(--radius);
-  padding: 5px 0;
-  font: inherit;
-  font-size: 12px;
-  color: var(--text-2);
-  cursor: pointer;
-  transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
-}
-.theme-chip:hover { background: var(--surface-hover); color: var(--text); }
-.theme-chip.is-active {
-  background: var(--selected-bg);
-  border-color: var(--selected-bg);
-  color: var(--selected-fg);
-}
-
-.is-nav-collapsed .nav-foot { display: none; }

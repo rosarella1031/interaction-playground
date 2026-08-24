@@ -12,7 +12,34 @@ const OPTIONS = ['Day', 'Week', 'Month', 'Year'];
 // study is a data change, not a layout change.
 const STUDIES = [{ id: 'segmented', label: 'Segmented control' }];
 
-const THEMES = [['system', 'Auto'], ['light', 'Light'], ['dark', 'Dark']];
+const THEME_ORDER = ['system', 'light', 'dark'];
+const THEME_LABEL = { system: 'Auto', light: 'Light', dark: 'Dark' };
+
+function ThemeIcon({ mode }) {
+  if (mode === 'light') {
+    return (
+      <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true">
+        <circle cx="7" cy="7" r="2.9" fill="none" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M7 .9v1.6M7 11.5v1.6M1.6 7h1.5M10.9 7h1.5M3.2 3.2l1.1 1.1M9.7 9.7l1.1 1.1M10.8 3.2 9.7 4.3M4.3 9.7 3.2 10.8"
+              stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  if (mode === 'dark') {
+    return (
+      <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true">
+        <path d="M11.6 8.6A5.1 5.1 0 0 1 5.4 2.4a5.2 5.2 0 1 0 6.2 6.2Z"
+              fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+  return (
+    <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true">
+      <circle cx="7" cy="7" r="5.1" fill="none" stroke="currentColor" strokeWidth="1.2" />
+      <path d="M7 1.9a5.1 5.1 0 0 1 0 10.2Z" fill="currentColor" />
+    </svg>
+  );
+}
 
 function PanelIcon() {
   return (
@@ -247,20 +274,17 @@ export default function App() {
         </ul>
 
         <div className="nav-foot">
-          <p className="nav-label">Theme</p>
-          <div className="theme-chips">
-            {THEMES.map(([id, label]) => (
-              <button
-                key={id}
-                type="button"
-                className={`theme-chip${theme === id ? ' is-active' : ''}`}
-                onClick={() => setTheme(id)}
-                aria-pressed={theme === id}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+          <button
+            type="button"
+            className="nav-theme has-tip tip-up"
+            onClick={() =>
+              setTheme((t) => THEME_ORDER[(THEME_ORDER.indexOf(t) + 1) % THEME_ORDER.length])
+            }
+            data-tip={`Theme: ${THEME_LABEL[theme]}`}
+            aria-label={`Theme: ${THEME_LABEL[theme]}. Click to change.`}
+          >
+            <ThemeIcon mode={theme} />
+          </button>
         </div>
       </nav>
 
