@@ -471,11 +471,11 @@ body { margin: 0; background: var(--bg); }
 .row input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 2.5px;
-  height: 14px;
+  width: 1.5px;
+  height: 10px;
   border-radius: 0;
   background: var(--text);
-  margin-top: -6.5px;
+  margin-top: -4.25px;
   cursor: pointer;
 }
 .row input[type='range']::-moz-range-track {
@@ -483,8 +483,8 @@ body { margin: 0; background: var(--bg); }
   background: var(--border);
 }
 .row input[type='range']::-moz-range-thumb {
-  width: 2.5px;
-  height: 14px;
+  width: 1.5px;
+  height: 10px;
   border: 0;
   border-radius: 0;
   background: var(--text);
@@ -730,7 +730,9 @@ body { margin: 0; background: var(--bg); }
   .chev { display: none; }
   .sec-detach { display: none; }
 
-  .sec-body, .sec-detached { grid-row: 2; grid-column: 1 / -1; }
+  /* more breathing room between the tab strip and its content than
+     desktop needs, where the header sits directly above its own body */
+  .sec-body, .sec-detached { grid-row: 2; grid-column: 1 / -1; padding-top: 22px; }
   .dock [data-id] .sec-body,
   .dock [data-id] .sec-detached { display: none; }
   .dock[data-active='motion'] [data-id='motion'] .sec-body,
