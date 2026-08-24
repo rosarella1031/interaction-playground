@@ -274,6 +274,11 @@ export default function App() {
         </ul>
 
         <div className="nav-foot">
+          <p className="nav-note">
+            Visual design in progress — the interface styling is still being
+            iterated. Motion behavior is the focus for now.
+          </p>
+
           <button
             type="button"
             className="nav-theme has-tip tip-up"

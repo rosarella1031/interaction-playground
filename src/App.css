@@ -189,7 +189,8 @@ body { margin: 0; background: var(--bg); }
 .is-nav-collapsed .nav-label,
 .is-nav-collapsed .nav-list { display: none; }
 .is-nav-collapsed .nav-head { justify-content: center; padding: 12px 0; }
-.is-nav-collapsed .nav-foot { justify-content: center; padding: 12px 0; }
+.is-nav-collapsed .nav-note { display: none; }
+.is-nav-collapsed .nav-foot { align-items: center; padding: 12px 0; }
 
 /* left: preview never scrolls away because nothing here scrolls */
 .main {
@@ -702,5 +703,16 @@ body { margin: 0; background: var(--bg); }
 .nav-foot {
   margin-top: auto;
   display: flex;
-  padding: 12px 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 8px 12px;
+}
+
+.nav-note {
+  margin: 0;
+  padding: 0 6px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-muted);
 }
