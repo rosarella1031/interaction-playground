@@ -431,11 +431,68 @@ body { margin: 0; background: var(--bg); }
   text-overflow: ellipsis;
 }
 
+/* Slider — a single flat line, a fixed tick at each end, and a thumb
+   that's a vertical bar rather than a round knob. Every part is drawn by
+   hand (no native accent-color) so it renders identically everywhere;
+   the two end-ticks live on the wrapping .slider span since a replaced
+   element like <input> can't take ::before/::after content itself. */
+.slider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.slider::before,
+.slider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 1.5px;
+  height: 10px;
+  background: var(--border);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.slider::before { left: 0; }
+.slider::after { right: 0; }
+
 .row input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
   width: 100%;
   height: 16px;
-  accent-color: var(--text);
+  background: transparent;
   cursor: pointer;
+}
+.row input[type='range']::-webkit-slider-runnable-track {
+  height: 1.5px;
+  background: var(--border);
+}
+.row input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 2.5px;
+  height: 14px;
+  border-radius: 0;
+  background: var(--text);
+  margin-top: -6.5px;
+  cursor: pointer;
+}
+.row input[type='range']::-moz-range-track {
+  height: 1.5px;
+  background: var(--border);
+}
+.row input[type='range']::-moz-range-thumb {
+  width: 2.5px;
+  height: 14px;
+  border: 0;
+  border-radius: 0;
+  background: var(--text);
+  cursor: pointer;
+}
+.row input[type='range']:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
 }
 
 .row-input {
@@ -691,44 +748,6 @@ body { margin: 0; background: var(--bg); }
   }
 
   .row { grid-template-columns: 108px 1fr 56px; gap: 8px; }
-
-  /* ── native range thumb, reset ──────────────────────────────
-     iOS Safari stretches the default thumb to match an explicit input
-     height instead of keeping it circular once a fixed height is set
-     without a matching -webkit-appearance reset. Below, appearance is
-     fully reset and the thumb/track are drawn by hand so the thumb stays
-     a small fixed circle on every touch browser. */
-  .row input[type='range'] {
-    -webkit-appearance: none;
-    appearance: none;
-    background: transparent;
-  }
-  .row input[type='range']::-webkit-slider-runnable-track {
-    height: 4px;
-    border-radius: 2px;
-    background: var(--border);
-  }
-  .row input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: var(--text);
-    margin-top: -5px;
-  }
-  .row input[type='range']::-moz-range-track {
-    height: 4px;
-    border-radius: 2px;
-    background: var(--border);
-  }
-  .row input[type='range']::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
-    border: 0;
-    border-radius: 50%;
-    background: var(--text);
-  }
 }
 
 /* ── narrow: not enough width for three columns at all ───────

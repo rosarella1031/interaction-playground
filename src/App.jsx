@@ -212,15 +212,17 @@ export default function App() {
             {Object.keys(RANGES).map((key) => (
               <div className="row" key={key}>
                 <label className="row-label" htmlFor={`f-${key}`}>{LABELS[key]}</label>
-                <input
-                  type="range"
-                  aria-label={LABELS[key]}
-                  min={RANGES[key].min}
-                  max={RANGES[key].max}
-                  step={RANGES[key].step}
-                  value={config[key]}
-                  onChange={(e) => setParam(key, Number(e.target.value))}
-                />
+                <span className="slider">
+                  <input
+                    type="range"
+                    aria-label={LABELS[key]}
+                    min={RANGES[key].min}
+                    max={RANGES[key].max}
+                    step={RANGES[key].step}
+                    value={config[key]}
+                    onChange={(e) => setParam(key, Number(e.target.value))}
+                  />
+                </span>
                 <NumberField
                   id={`f-${key}`}
                   value={config[key]}
