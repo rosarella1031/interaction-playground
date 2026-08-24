@@ -868,6 +868,8 @@ body { margin: 0; background: var(--bg); overflow-x: hidden; }
   }
 
   .fwin { width: calc(100vw - 32px); max-width: 344px; }
+
+  .preset { padding: 7px 14px; }
 }
 
 /* ── dark scheme ─────────────────────────────────────────── */
