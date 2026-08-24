@@ -12,6 +12,8 @@ const OPTIONS = ['Day', 'Week', 'Month', 'Year'];
 // study is a data change, not a layout change.
 const STUDIES = [{ id: 'segmented', label: 'Segmented control' }];
 
+const THEMES = [['system', 'Auto'], ['light', 'Light'], ['dark', 'Dark']];
+
 function PanelIcon() {
   return (
     <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true">
@@ -92,6 +94,19 @@ export default function App() {
   const [openSec, setOpenSec] = useState({ motion: true, curve: true, code: true });
   const [popped, setPopped] = useState({});
   const [navOpen, setNavOpen] = useState(true);
+  const [theme, setTheme] = useState('system');
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const apply = () => {
+      document.documentElement.dataset.theme =
+        theme === 'system' ? (mq.matches ? 'dark' : 'light') : theme;
+    };
+    apply();
+    if (theme !== 'system') return undefined;
+    mq.addEventListener('change', apply);          // keep following the OS
+    return () => mq.removeEventListener('change', apply);
+  }, [theme]);
 
   const toggleSec = (id) => setOpenSec((o) => ({ ...o, [id]: !o[id] }));
   const detach = (id) => setPopped((p) => ({ ...p, [id]: true }));
@@ -230,6 +245,23 @@ export default function App() {
             </li>
           ))}
         </ul>
+
+        <div className="nav-foot">
+          <p className="nav-label">Theme</p>
+          <div className="theme-chips">
+            {THEMES.map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                className={`theme-chip${theme === id ? ' is-active' : ''}`}
+                onClick={() => setTheme(id)}
+                aria-pressed={theme === id}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
       </nav>
 
       <div className="main">

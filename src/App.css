@@ -62,8 +62,9 @@
    color-scheme also hands the theme to native scrollbars and range inputs. */
 html {
   background: var(--bg);
-  color-scheme: light dark;
+  color-scheme: light;
 }
+html[data-theme='dark'] { color-scheme: dark; }
 
 body { margin: 0; background: var(--bg); }
 
@@ -644,42 +645,71 @@ body { margin: 0; background: var(--bg); }
 
 /* ── dark scheme ─────────────────────────────────────────── */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg:            #0A0A0A;
-    --surface:       #1C1C1C;
-    --surface-2:     #141414;
-    --surface-hover: #262626;
-    --border:        #2A2A2A;
+:root[data-theme='dark'] {
+  --bg:            #0A0A0A;
+  --surface:       #1C1C1C;
+  --surface-2:     #141414;
+  --surface-hover: #262626;
+  --border:        #2A2A2A;
 
-    --text:          #EDEDED;
-    --text-2:        #A1A1A1;
-    --text-muted:    #7E7E7E;
+  --text:          #EDEDED;
+  --text-2:        #A1A1A1;
+  --text-muted:    #7E7E7E;
 
-    /* active chip inverts: light fill, dark label */
-    --selected-bg:   #EDEDED;
-    --selected-fg:   #171717;
+  /* active chip inverts: light fill, dark label */
+  --selected-bg:   #EDEDED;
+  --selected-fg:   #171717;
 
-    --preview-surface:    #212121;
-    --control-track:      #0E0E0E;
-    --control-border:     #383838;
-    --control-selected:   #474747;
-    --control-text:       #FFFFFF;
-    --control-text-muted: #949494;
+  --preview-surface:    #212121;
+  --control-track:      #0E0E0E;
+  --control-border:     #383838;
+  --control-selected:   #474747;
+  --control-text:       #FFFFFF;
+  --control-text-muted: #949494;
 
-    --tooltip-bg: #EDEDED;
-    --tooltip-fg: #171717;
+  --tooltip-bg: #EDEDED;
+  --tooltip-fg: #171717;
 
-    --code-surface: #111111;
-    --code-text:    #E6E6E6;
-    --code-lit:     #1C1C1C;
+  --code-surface: #111111;
+  --code-text:    #E6E6E6;
+  --code-lit:     #1C1C1C;
 
-    --tok-kw:  #A78BFA;
-    --tok-fn:  #D6B36A;
-    --tok-var: #7AA2D6;
-    --tok-str: #D28A9B;
-    --tok-num: #7FB38E;
-    --tok-com: #737373;
-    --tok-pun: #B8B8B8;
-  }
+  --tok-kw:  #A78BFA;
+  --tok-fn:  #D6B36A;
+  --tok-var: #7AA2D6;
+  --tok-str: #D28A9B;
+  --tok-num: #7FB38E;
+  --tok-com: #737373;
+  --tok-pun: #B8B8B8;
 }
+
+/* ── theme switcher ──────────────────────────────────────── */
+
+.nav-foot {
+  margin-top: auto;
+  padding: 16px 14px 16px;
+}
+
+.theme-chips { display: flex; gap: 4px; }
+
+.theme-chip {
+  flex: 1;
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 5px 0;
+  font: inherit;
+  font-size: 12px;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+.theme-chip:hover { background: var(--surface-hover); color: var(--text); }
+.theme-chip.is-active {
+  background: var(--selected-bg);
+  border-color: var(--selected-bg);
+  color: var(--selected-fg);
+}
+
+.is-nav-collapsed .nav-foot { display: none; }
