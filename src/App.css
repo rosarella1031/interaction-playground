@@ -33,6 +33,13 @@
   --control-text:       #171717;
   --control-text-muted: #565656;
 
+  /* filled-bar sliders: same "recessed < raised" ladder idea as the
+     preview/control tokens above, sized for a slider instead of a well */
+  --slider-track:      #EDEDED;
+  --slider-fill:       #FFFFFF;
+  --slider-text:       #171717;
+  --slider-text-muted: #6B6B6B;
+
   /* inverted so the label reads instantly against any surface */
   --tooltip-bg: #171717;
   --tooltip-fg: #FFFFFF;
@@ -426,54 +433,48 @@ body { margin: 0; background: var(--bg); overflow-x: hidden; }
 
 /* ── slider rows ─────────────────────────────────────────── */
 
-.rows { display: flex; flex-direction: column; }
+.rows { display: flex; flex-direction: column; gap: 10px; }
 
+/* Filled-bar slider: the row IS the control, not a line running through
+   it. A native range input fills the pill edge to edge; its own track
+   pseudo-element paints the fill as a plain hard-stop gradient at the
+   current value's percentage (--pct, set inline per row) and leaves the
+   rest transparent, so the row's own --slider-track shows through as
+   the unfilled portion. The thumb is fully transparent — the edge of
+   the fill reads as the handle, like a volume slider rather than a
+   knob-on-a-line. Label and value sit on top as plain overlays: the
+   label is pointer-events:none so drags pass through it to the input
+   beneath; the value stays a real, focusable, typable field. */
 .row {
-  display: grid;
-  grid-template-columns: 100px 1fr 66px;
-  align-items: center;
-  gap: 12px;
-  padding: 6px 0;
+  position: relative;
+  height: 60px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--slider-track);
 }
 
 .row-label {
-  font-size: 13px;
-  color: var(--text-2);
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  max-width: calc(100% - 120px);
+  font-size: 15px;
+  color: var(--slider-text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-/* Slider — a single flat line, a fixed tick at each end, and a thumb
-   that's a vertical bar rather than a round knob. Every part is drawn by
-   hand (no native accent-color) so it renders identically everywhere;
-   the two end-ticks live on the wrapping .slider span since a replaced
-   element like <input> can't take ::before/::after content itself. */
-.slider {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-.slider::before,
-.slider::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: 1.5px;
-  height: 10px;
-  background: var(--border);
-  transform: translateY(-50%);
   pointer-events: none;
 }
-.slider::before { left: 0; }
-.slider::after { right: 0; }
 
 .row input[type='range'] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
   -webkit-appearance: none;
   appearance: none;
-  width: 100%;
-  height: 16px;
   background: transparent;
   cursor: pointer;
   /* a horizontal slider naturally captures drag gestures for its own
@@ -486,44 +487,59 @@ body { margin: 0; background: var(--bg); overflow-x: hidden; }
   touch-action: pan-y;
 }
 .row input[type='range']::-webkit-slider-runnable-track {
-  height: 1.5px;
-  background: var(--border);
+  width: 100%;
+  height: 100%;
+  -webkit-appearance: none;
+  background: linear-gradient(
+    to right,
+    var(--slider-fill) 0%, var(--slider-fill) var(--pct),
+    transparent var(--pct), transparent 100%
+  );
+}
+.row input[type='range']::-moz-range-track {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    var(--slider-fill) 0%, var(--slider-fill) var(--pct),
+    transparent var(--pct), transparent 100%
+  );
 }
 .row input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
-  appearance: none;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--text);
-  margin-top: -3.25px;
+  width: 2px;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   cursor: pointer;
 }
-.row input[type='range']::-moz-range-track {
-  height: 1.5px;
-  background: var(--border);
-}
 .row input[type='range']::-moz-range-thumb {
-  width: 8px;
-  height: 8px;
+  width: 2px;
+  height: 100%;
   border: 0;
-  border-radius: 50%;
-  background: var(--text);
+  border-radius: 0;
+  background: transparent;
   cursor: pointer;
 }
 .row input[type='range']:focus-visible {
   outline: 2px solid var(--text);
-  outline-offset: 3px;
+  outline-offset: -2px;
 }
 
 .row-input {
-  width: 100%;
-  min-width: 0;
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  /* wide enough for the longest value any range can show, e.g. a
+     six-character stretch reading like "0.0185" */
+  width: 80px;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 14px;
   font-variant-numeric: tabular-nums;
   text-align: right;
-  color: var(--text);
+  color: var(--slider-text);
   background: transparent;
   border: 1px solid transparent;
   border-radius: var(--radius);
@@ -535,6 +551,7 @@ body { margin: 0; background: var(--bg); overflow-x: hidden; }
   outline: none;
   border-color: var(--text);
   background: var(--surface);
+  color: var(--text);
 }
 
 /* ── toggle ──────────────────────────────────────────────── */
@@ -748,8 +765,8 @@ body { margin: 0; background: var(--bg); overflow-x: hidden; }
 
   /* dock stays in its desktop form here — independently collapsible
      stacked panels, chevron + detach visible — just inside a narrower
-     column. Only the ≤640px tier below switches it to tabs. */
-  .row { grid-template-columns: 108px 1fr 56px; gap: 8px; }
+     column. Only the ≤640px tier below switches it to tabs. The pill
+     rows scale fine at this width without their own override. */
 }
 
 /* ── narrow: not enough width for three columns at all ───────
@@ -919,6 +936,11 @@ body { margin: 0; background: var(--bg); overflow-x: hidden; }
   --control-selected:   #474747;
   --control-text:       #FFFFFF;
   --control-text-muted: #949494;
+
+  --slider-track:      #242424;
+  --slider-fill:       #3D3D3D;
+  --slider-text:       #F2F2F2;
+  --slider-text-muted: #9A9A9A;
 
   --tooltip-bg: #EDEDED;
   --tooltip-fg: #171717;

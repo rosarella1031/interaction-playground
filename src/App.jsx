@@ -220,28 +220,32 @@ export default function App() {
           </div>
 
           <div className="rows">
-            {Object.keys(RANGES).map((key) => (
-              <div className="row" key={key}>
-                <label className="row-label" htmlFor={`f-${key}`}>{LABELS[key]}</label>
-                <span className="slider">
+            {Object.keys(RANGES).map((key) => {
+              const { min, max } = RANGES[key];
+              const pct = ((config[key] - min) / (max - min)) * 100;
+              return (
+                <div className="row" key={key} style={{ '--pct': `${pct}%` }}>
                   <input
                     type="range"
                     aria-label={LABELS[key]}
-                    min={RANGES[key].min}
-                    max={RANGES[key].max}
+                    min={min}
+                    max={max}
                     step={RANGES[key].step}
                     value={config[key]}
                     onChange={(e) => setParam(key, Number(e.target.value))}
                   />
-                </span>
-                <NumberField
-                  id={`f-${key}`}
-                  value={config[key]}
-                  range={RANGES[key]}
-                  onChange={(n) => setParam(key, n)}
-                />
-              </div>
-            ))}
+                  {/* pointer-events:none — sits on top visually, but drags
+                      pass through to the range input beneath it */}
+                  <label className="row-label" htmlFor={`f-${key}`}>{LABELS[key]}</label>
+                  <NumberField
+                    id={`f-${key}`}
+                    value={config[key]}
+                    range={RANGES[key]}
+                    onChange={(n) => setParam(key, n)}
+                  />
+                </div>
+              );
+            })}
           </div>
 
           <label className="toggle">
