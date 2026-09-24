@@ -433,7 +433,7 @@ body { margin: 0; background: var(--bg); overflow-x: hidden; }
 
 /* ── slider rows ─────────────────────────────────────────── */
 
-.rows { display: flex; flex-direction: column; gap: 10px; }
+.rows { display: flex; flex-direction: column; gap: 7px; }
 
 /* Filled-bar slider: the row IS the control, not a line running through
    it. A native range input fills the pill edge to edge; its own track
@@ -447,19 +447,19 @@ body { margin: 0; background: var(--bg); overflow-x: hidden; }
    beneath; the value stays a real, focusable, typable field. */
 .row {
   position: relative;
-  height: 60px;
-  border-radius: 18px;
+  height: 44px;
+  border-radius: 13px;
   overflow: hidden;
   background: var(--slider-track);
 }
 
 .row-label {
   position: absolute;
-  left: 20px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  max-width: calc(100% - 120px);
-  font-size: 15px;
+  max-width: calc(100% - 96px);
+  font-size: 13px;
   color: var(--slider-text-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -529,21 +529,21 @@ body { margin: 0; background: var(--bg); overflow-x: hidden; }
 
 .row-input {
   position: absolute;
-  right: 16px;
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
   /* wide enough for the longest value any range can show, e.g. a
      six-character stretch reading like "0.0185" */
-  width: 80px;
+  width: 70px;
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
   text-align: right;
   color: var(--slider-text);
   background: transparent;
   border: 1px solid transparent;
   border-radius: var(--radius);
-  padding: 4px 6px;
+  padding: 3px 5px;
   transition: border-color 120ms ease, background-color 120ms ease;
 }
 .row-input:hover { background: var(--surface-hover); }
